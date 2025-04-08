@@ -6,20 +6,20 @@ db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS noticias (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titulo TEXT,
-            conteudo TEXT,
-            imagem TEXT,         -- Novo campo para URL da imagem
-            data_criacao TEXT
+            title TEXT,
+            description TEXT,
+            image TEXT,         -- Novo campo para URL da image
+            date TEXT
         )
     `);
 });
 
 
-function criarNoticia(titulo, conteudo, imagem, dataCriacao) {
+function criarNoticia(title, description, image, dataCriacao) {
     return new Promise((resolve, reject) => {
         db.run(
-            'INSERT INTO noticias (titulo, conteudo, imagem, data_criacao) VALUES (?, ?, ?, ?)',
-            [titulo, conteudo, imagem, dataCriacao],
+            'INSERT INTO noticias (title, description, image, date) VALUES (?, ?, ?, ?)',
+            [title, description, image, dataCriacao],
             function (err) {
                 if (err) reject(err);
                 resolve({ id: this.lastID });
@@ -29,20 +29,30 @@ function criarNoticia(titulo, conteudo, imagem, dataCriacao) {
 }
 
 
-// Função para listar todas as notícias
-function listarNoticias() {
-    return new Promise((resolve, reject) => {
-        db.all('SELECT * FROM noticias ORDER BY data_criacao DESC', [], (err, rows) => {
-            if (err) reject(err);
-            resolve(rows);
+async function listarNoticias() {
+    try {
+        const result = await new Promise((resolve, reject) => {
+            db.all('SELECT * FROM noticias ORDER BY date DESC', [], (err, rows) => {
+                if (err) return reject(err);
+                resolve(rows);
+            });
         });
-    });
+
+        if (result.length === 0) {
+            return 'Sem notícias cadastradas';
+        }
+
+        return result;
+    } catch (error) {
+        throw error;
+    }
 }
 
-async function editarNoticia(id, titulo, conteudo, imagem) {
+
+async function editarNoticia(id, title, description, image) {
     const result = await db.run(
-        'UPDATE noticias SET titulo = ?, conteudo = ?, imagem = ? WHERE id = ?',
-        [titulo, conteudo, imagem, id]
+        'UPDATE noticias SET title = ?, description = ?, image = ? WHERE id = ?',
+        [title, description, image, id]
     );
     return result.affectedRows > 0;
 }

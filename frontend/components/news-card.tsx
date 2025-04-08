@@ -14,7 +14,7 @@ export function NewsCard({ title, description, image, date, id }: NewsCardProps)
     <Card key={id} className="overflow-hidden h-full flex flex-col transition-all duration-200 hover:shadow-md">
       <div className="relative h-48 w-full">
         <Image
-          src={image || "/placeholder.svg"}
+          src={image}
           alt={title}
           fill
           className="object-cover"

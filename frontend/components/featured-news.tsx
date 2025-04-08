@@ -2,6 +2,7 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 
 interface FeaturedNewsProps {
+  id: number
   title: string
   description: string
   content: string
